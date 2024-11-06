@@ -1,10 +1,11 @@
--- Set up for the restaurant database
+-- Create Address table
 CREATE TABLE public."Address" (
     id BIGINT PRIMARY KEY,
     address VARCHAR NOT NULL,
     zip VARCHAR NOT NULL
 );
 
+-- Create Customer table
 CREATE TABLE public."Customer" (
     username VARCHAR NOT NULL,
     email VARCHAR NOT NULL UNIQUE,
@@ -16,6 +17,7 @@ CREATE TABLE public."Customer" (
     CONSTRAINT check_phone_number CHECK (phone_number ~ '^[0-9]{10}$')
 );
 
+-- Create Franchise table
 CREATE TABLE public."Franchise" (
     id BIGINT PRIMARY KEY,
     "City" VARCHAR NOT NULL,
@@ -24,26 +26,33 @@ CREATE TABLE public."Franchise" (
     FOREIGN KEY ("Address_id") REFERENCES public."Address"(id)
 );
 
-CREATE TABLE public."Menu_Items" (
-    menu_id BIGINT PRIMARY KEY,
-    menu_item_id BIGINT NOT NULL,
-    FOREIGN KEY (menu_item_id) REFERENCES public.menu_item(menu_item_id)
+-- Create menu_item table
+CREATE TABLE public.menu_item (
+    menu_item_id BIGINT PRIMARY KEY,
+    item_name VARCHAR NOT NULL,
+    type_of_menu_item VARCHAR NOT NULL,
+    price BIGINT[]
 );
 
+-- Create Orders table with cust_id as foreign key to link to Customer table
 CREATE TABLE public."Orders" (
     id BIGINT PRIMARY KEY,
     "Menu_items_id" BIGINT NOT NULL,
     "Franchise_id" BIGINT NOT NULL,
+    cust_id BIGINT NOT NULL,  -- Added this field to link Orders to Customer
     FOREIGN KEY ("Menu_items_id") REFERENCES public.menu_item(menu_item_id),
-    FOREIGN KEY ("Franchise_id") REFERENCES public."Franchise"(id)
+    FOREIGN KEY ("Franchise_id") REFERENCES public."Franchise"(id),
+    FOREIGN KEY (cust_id) REFERENCES public."Customer"(user_id)
 );
 
+-- Create Order_Summary table
 CREATE TABLE public."Order_Summary" (
     overall_order_id BIGINT PRIMARY KEY,
     order_id BIGINT NOT NULL,
     FOREIGN KEY (order_id) REFERENCES public."Orders"(id)
 );
 
+-- Create Payment_cards table
 CREATE TABLE public."Payment_cards" (
     id BIGINT PRIMARY KEY,
     card_num CHAR(16) NOT NULL,
@@ -52,6 +61,7 @@ CREATE TABLE public."Payment_cards" (
     FOREIGN KEY (user_id) REFERENCES public."Customer"(user_id)
 );
 
+-- Create Payments table
 CREATE TABLE public."Payments" (
     payment_id BIGINT PRIMARY KEY,
     card_id CHAR(16) NOT NULL,
@@ -60,6 +70,7 @@ CREATE TABLE public."Payments" (
     FOREIGN KEY (cust_id) REFERENCES public."Customer"(user_id)
 );
 
+-- Create Pricing table
 CREATE TABLE public."Pricing" (
     id SERIAL PRIMARY KEY,
     menu_item_id BIGINT NOT NULL,
@@ -67,6 +78,7 @@ CREATE TABLE public."Pricing" (
     FOREIGN KEY (menu_item_id) REFERENCES public.menu_item(menu_item_id)
 );
 
+-- Create Special_Menu_Items table
 CREATE TABLE public."Special_Menu_Items" (
     id BIGINT PRIMARY KEY,
     entree VARCHAR,
@@ -74,6 +86,7 @@ CREATE TABLE public."Special_Menu_Items" (
     side_2 VARCHAR
 );
 
+-- Create Transactions table
 CREATE TABLE public."Transactions" (
     transaction_id BIGINT PRIMARY KEY,
     "Payment_id" BIGINT,
@@ -85,14 +98,14 @@ CREATE TABLE public."Transactions" (
     FOREIGN KEY (cust_id) REFERENCES public."Customer"(user_id)
 );
 
-CREATE TABLE public.menu_item (
-    menu_item_id BIGINT PRIMARY KEY,
-    item_name VARCHAR NOT NULL,
-    type_of_menu_item VARCHAR NOT NULL,
-    price BIGINT[]
+-- Create Menu_Items table for additional relationship between menu and items
+CREATE TABLE public."Menu_Items" (
+    menu_id BIGINT PRIMARY KEY,
+    menu_item_id BIGINT NOT NULL,
+    FOREIGN KEY (menu_item_id) REFERENCES public.menu_item(menu_item_id)
 );
 
--- Populate tables with sample data
+-- Populate tables
 
 -- Address table
 INSERT INTO public."Address" (id, address, zip)
@@ -121,24 +134,34 @@ VALUES
     (4, 'Houston', 'TX', 4),
     (5, 'Phoenix', 'AZ', 5);
 
+-- menu_item table
+INSERT INTO public.menu_item (menu_item_id, item_name, type_of_menu_item, price)
+VALUES
+    (1, 'Cheeseburger', 'Main Course', ARRAY[8, 10, 12]),
+    (2, 'Veggie Pizza', 'Main Course', ARRAY[10, 12, 14]),
+    (3, 'Chicken Tenders', 'Appetizer', ARRAY[6, 8, 10]),
+    (4, 'Caesar Salad', 'Side', ARRAY[5, 7]),
+    (5, 'French Fries', 'Side', ARRAY[3, 5]),
+    (6, 'Chocolate Cake', 'Dessert', ARRAY[4, 6, 8]);
+
 -- Menu_Items table
 INSERT INTO public."Menu_Items" (menu_id, menu_item_id)
 VALUES
     (1, 1),
-    (1, 2),
-    (2, 3),
-    (3, 4),
-    (4, 5),
-    (5, 6);
+    (2, 2),
+    (3, 3),
+    (4, 4),
+    (5, 5),
+    (6, 6);
 
--- Orders table
-INSERT INTO public."Orders" (id, "Menu_items_id", "Franchise_id")
+-- Orders table with cust_id linking to Customer
+INSERT INTO public."Orders" (id, "Menu_items_id", "Franchise_id", cust_id)
 VALUES
-    (1, 1, 1),
-    (2, 2, 2),
-    (3, 3, 3),
-    (4, 4, 4),
-    (5, 5, 5);
+    (1, 1, 1, 1),
+    (2, 2, 2, 2),
+    (3, 3, 3, 3),
+    (4, 4, 4, 4),
+    (5, 5, 5, 5);
 
 -- Order_Summary table
 INSERT INTO public."Order_Summary" (overall_order_id, order_id)
@@ -193,13 +216,3 @@ VALUES
     (3, 3, true, 200, 3, 3),
     (4, 4, false, 85, 4, 4),
     (5, 5, true, 100, 5, 5);
-
--- menu_item table
-INSERT INTO public.menu_item (menu_item_id, item_name, type_of_menu_item, price)
-VALUES
-    (1, 'Cheeseburger', 'Main Course', ARRAY[8, 10, 12]),
-    (2, 'Veggie Pizza', 'Main Course', ARRAY[10, 12, 14]),
-    (3, 'Chicken Tenders', 'Appetizer', ARRAY[6, 8, 10]),
-    (4, 'Caesar Salad', 'Side', ARRAY[5, 7]),
-    (5, 'French Fries', 'Side', ARRAY[3, 5]),
-    (6, 'Chocolate Cake', 'Dessert', ARRAY[4, 6, 8]);
