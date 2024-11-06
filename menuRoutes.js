@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 // GET all menu items
-router.get('/', async (req, res) => {
+router.get('/menu-items', async (req, res) => {
   try {
     const result = await req.pool.query('SELECT * FROM menu_item');
     res.json(result.rows);
@@ -13,7 +13,7 @@ router.get('/', async (req, res) => {
 });
 
 // POST a new menu item
-router.post('/', async (req, res) => {
+router.post('/menu-items', async (req, res) => {
   const { item_name, type_of_menu_item, price } = req.body;
   try {
     const result = await req.pool.query(
@@ -28,7 +28,7 @@ router.post('/', async (req, res) => {
 });
 
 // PUT to update a menu item
-router.put('/:id', async (req, res) => {
+router.put('/menu-items/:id', async (req, res) => {
   const { id } = req.params;
   const { item_name, type_of_menu_item, price } = req.body;
   try {
@@ -47,7 +47,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // DELETE a menu item
-router.delete('/:id', async (req, res) => {
+router.delete('/menu-items/:id', async (req, res) => {
   const { id } = req.params;
   try {
     const result = await req.pool.query(
