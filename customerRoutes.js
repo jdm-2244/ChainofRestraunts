@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-// GET all customers
+// Get all customers
 router.get('/customers', async (req, res) => {
   try {
     const result = await req.pool.query('SELECT * FROM "Customer"');
@@ -12,7 +12,7 @@ router.get('/customers', async (req, res) => {
   }
 });
 
-// GET a specific customer by ID
+// Get a specific customer by ID
 router.get('/customers/:id', async (req, res) => {
   const { id } = req.params;
   try {
