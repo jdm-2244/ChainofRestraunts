@@ -32,7 +32,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// Route to serve the homepage
+// Serve the homepage
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'homepage.html'));
 });
@@ -82,7 +82,7 @@ app.get('/api/orders', async (req, res) => {
     const result = await pool.query(`
       SELECT o.id as order_id, c.username, c.email, f."City" as franchise_city
       FROM "Orders" o
-      JOIN "Customer" c ON o.customer_id = c.user_id
+      JOIN "Customer" c ON c.user_id = o.cust_id -- Assuming "cust_id" is the linking column
       JOIN "Franchise" f ON o."Franchise_id" = f.id
     `);
     res.json(result.rows);
