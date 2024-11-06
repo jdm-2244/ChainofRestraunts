@@ -2,28 +2,14 @@ require('dotenv').config();
 const express = require('express');
 const { Pool } = require('pg');
 const path = require('path');
-
-// Import menu routes
 const menuRoutes = require('./menuRoutes');
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Middleware to parse JSON bodies
-app.use(express.json());
-
-// Initialize the database pool connection using DATABASE_URL from .env
+// Database connection setup
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-});
-
-// Check database connection
-pool.connect((err) => {
-  if (err) {
-    console.error('Connection error', err.stack);
-  } else {
-    console.log('Connected to the database');
-  }
 });
 
 // Middleware to attach pool to every request
@@ -31,6 +17,9 @@ app.use((req, res, next) => {
   req.pool = pool;
   next();
 });
+
+// JSON parsing middleware
+app.use(express.json());
 
 // Serve the homepage
 app.get('/', (req, res) => {
@@ -40,49 +29,81 @@ app.get('/', (req, res) => {
 // Use menu routes for /api/menu paths
 app.use('/api/menu', menuRoutes);
 
-// Sample Transaction: Deduct payment from a customer's card and log the transaction
-app.post('/api/transaction', async (req, res) => {
-  const { cust_id, card_id, amount, order_id } = req.body;
+// Customer details endpoint
+app.get('/api/customers', async (req, res) => {
   try {
-    await pool.query('BEGIN');
-    
-    // Deduct the amount from the customer's card balance
-    await pool.query(
-      `UPDATE "Payment_cards" SET balance = balance - $1 WHERE id = $2 AND user_id = $3`,
-      [amount, card_id, cust_id]
-    );
-
-    // Insert the transaction into Payments
-    const result = await pool.query(
-      `INSERT INTO "Payments" (card_id, amount, cust_id) VALUES ($1, $2, $3) RETURNING *`,
-      [card_id, amount, cust_id]
-    );
-
-    // Insert into Transactions table
-    await pool.query(
-      `INSERT INTO "Transactions" ("Payment_id", "Cash", "Amount", "Order_id", cust_id) 
-      VALUES ($1, false, $2, $3, $4)`,
-      [result.rows[0].payment_id, amount, order_id, cust_id]
-    );
-
-    await pool.query('COMMIT');
-    res.status(201).json({ message: 'Transaction completed successfully' });
+    const result = await pool.query(`
+      SELECT user_id, username, email, phone_number, member, "First_name", "Last_name"
+      FROM "Customer"
+    `);
+    res.json(result.rows);
   } catch (error) {
-    await pool.query('ROLLBACK');
-    console.error('Transaction error:', error);
-    res.status(500).json({ error: 'Transaction failed' });
+    console.error('Error fetching customer details:', error);
+    res.status(500).json({ error: 'Failed to fetch customer details' });
   }
 });
 
-// Insightful Queries using Joins
+// POST route for creating a new transaction
+app.post('/api/transaction', async (req, res) => {
+  const { cust_id, card_id, amount, order_id } = req.body;
+  try {
+    await pool.query('BEGIN'); // Start the transaction
 
-// Query 1: View all orders with customer information
+    const cardUpdate = await pool.query(
+      `UPDATE "Payment_cards" SET balance = balance - $1 WHERE id = $2 AND user_id = $3 RETURNING balance`,
+      [amount, card_id, cust_id]
+    );
+
+    if (cardUpdate.rowCount === 0) {
+      throw new Error('Card not found or insufficient funds');
+    }
+
+    const paymentResult = await pool.query(
+      `INSERT INTO "Payments" (card_id, amount, cust_id) VALUES ($1, $2, $3) RETURNING payment_id`,
+      [card_id, amount, cust_id]
+    );
+
+    const paymentId = paymentResult.rows[0].payment_id;
+
+    await pool.query(
+      `INSERT INTO "Transactions" ("Payment_id", "Cash", "Amount", "Order_id", cust_id) 
+      VALUES ($1, false, $2, $3, $4)`,
+      [paymentId, amount, order_id, cust_id]
+    );
+
+    await pool.query('COMMIT'); // Commit the transaction
+    res.status(201).json({ message: 'Transaction completed successfully' });
+  } catch (error) {
+    await pool.query('ROLLBACK'); // Rollback on error
+    console.error('Transaction error:', error.message);
+    res.status(500).json({ error: 'Transaction failed', details: error.message });
+  }
+});
+
+// GET route for fetching all transactions
+app.get('/api/transactions', async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT t.transaction_id, t."Payment_id", t."Cash", t."Amount", t."Order_id", t.cust_id,
+             c.username, c.email, o."Franchise_id"
+      FROM "Transactions" t
+      JOIN "Customer" c ON c.user_id = t.cust_id
+      JOIN "Orders" o ON o.id = t."Order_id"
+    `);
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error fetching transactions:', error);
+    res.status(500).json({ error: 'Failed to fetch transactions' });
+  }
+});
+
+// GET route for viewing all orders with customer and franchise information
 app.get('/api/orders', async (req, res) => {
   try {
     const result = await pool.query(`
       SELECT o.id as order_id, c.username, c.email, f."City" as franchise_city
       FROM "Orders" o
-      JOIN "Customer" c ON c.user_id = o.cust_id -- Assuming "cust_id" is the linking column
+      JOIN "Customer" c ON c.user_id = o.cust_id
       JOIN "Franchise" f ON o."Franchise_id" = f.id
     `);
     res.json(result.rows);
@@ -92,7 +113,7 @@ app.get('/api/orders', async (req, res) => {
   }
 });
 
-// Query 2: Summarize payments by franchise
+// GET route for summarizing payments by franchise
 app.get('/api/payments-summary', async (req, res) => {
   try {
     const result = await pool.query(`
@@ -109,7 +130,7 @@ app.get('/api/payments-summary', async (req, res) => {
   }
 });
 
-// Query 3: List menu items and their prices by type
+// GET route for listing menu items and their prices by type
 app.get('/api/menu-items', async (req, res) => {
   try {
     const result = await pool.query(`
