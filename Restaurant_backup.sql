@@ -1,11 +1,11 @@
--- Create Address table
+--Adress table
 CREATE TABLE public."Address" (
     id BIGINT PRIMARY KEY,
     address VARCHAR NOT NULL,
     zip VARCHAR NOT NULL
 );
 
--- Create Customer table
+-- Customer table
 CREATE TABLE public."Customer" (
     username VARCHAR NOT NULL,
     email VARCHAR NOT NULL UNIQUE,
@@ -17,7 +17,7 @@ CREATE TABLE public."Customer" (
     CONSTRAINT check_phone_number CHECK (phone_number ~ '^[0-9]{10}$')
 );
 
--- Create Franchise table
+-- Franchise table
 CREATE TABLE public."Franchise" (
     id BIGINT PRIMARY KEY,
     "City" VARCHAR NOT NULL,
@@ -26,7 +26,7 @@ CREATE TABLE public."Franchise" (
     FOREIGN KEY ("Address_id") REFERENCES public."Address"(id)
 );
 
--- Create menu_item table
+--  menu_item table
 CREATE TABLE public.menu_item (
     menu_item_id BIGINT PRIMARY KEY,
     item_name VARCHAR NOT NULL,
@@ -39,20 +39,20 @@ CREATE TABLE public."Orders" (
     id BIGINT PRIMARY KEY,
     "Menu_items_id" BIGINT NOT NULL,
     "Franchise_id" BIGINT NOT NULL,
-    cust_id BIGINT NOT NULL,  -- Added this field to link Orders to Customer
+    cust_id BIGINT NOT NULL,  
     FOREIGN KEY ("Menu_items_id") REFERENCES public.menu_item(menu_item_id),
     FOREIGN KEY ("Franchise_id") REFERENCES public."Franchise"(id),
     FOREIGN KEY (cust_id) REFERENCES public."Customer"(user_id)
 );
 
--- Create Order_Summary table
+--  Order_Summary table
 CREATE TABLE public."Order_Summary" (
     overall_order_id BIGINT PRIMARY KEY,
     order_id BIGINT NOT NULL,
     FOREIGN KEY (order_id) REFERENCES public."Orders"(id)
 );
 
--- Create Payment_cards table
+-- Payment_cards table
 CREATE TABLE public."Payment_cards" (
     id BIGINT PRIMARY KEY,
     card_num CHAR(16) NOT NULL,
@@ -61,7 +61,7 @@ CREATE TABLE public."Payment_cards" (
     FOREIGN KEY (user_id) REFERENCES public."Customer"(user_id)
 );
 
--- Create Payments table
+-- Payments table
 CREATE TABLE public."Payments" (
     payment_id BIGINT PRIMARY KEY,
     card_id CHAR(16) NOT NULL,
@@ -70,7 +70,7 @@ CREATE TABLE public."Payments" (
     FOREIGN KEY (cust_id) REFERENCES public."Customer"(user_id)
 );
 
--- Create Pricing table
+-- Pricing table
 CREATE TABLE public."Pricing" (
     id SERIAL PRIMARY KEY,
     menu_item_id BIGINT NOT NULL,
@@ -78,7 +78,7 @@ CREATE TABLE public."Pricing" (
     FOREIGN KEY (menu_item_id) REFERENCES public.menu_item(menu_item_id)
 );
 
--- Create Special_Menu_Items table
+-- Special_Menu_Items table
 CREATE TABLE public."Special_Menu_Items" (
     id BIGINT PRIMARY KEY,
     entree VARCHAR,
@@ -86,7 +86,7 @@ CREATE TABLE public."Special_Menu_Items" (
     side_2 VARCHAR
 );
 
--- Create Transactions table
+--  Transactions table
 CREATE TABLE public."Transactions" (
     transaction_id BIGINT PRIMARY KEY,
     "Payment_id" BIGINT,
@@ -98,14 +98,14 @@ CREATE TABLE public."Transactions" (
     FOREIGN KEY (cust_id) REFERENCES public."Customer"(user_id)
 );
 
--- Create Menu_Items table for additional relationship between menu and items
+--  Menu_Items table for additional relationship between menu and items
 CREATE TABLE public."Menu_Items" (
     menu_id BIGINT PRIMARY KEY,
     menu_item_id BIGINT NOT NULL,
     FOREIGN KEY (menu_item_id) REFERENCES public.menu_item(menu_item_id)
 );
 
--- Populate tables
+-- Populate 
 
 -- Address table
 INSERT INTO public."Address" (id, address, zip)
