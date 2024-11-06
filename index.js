@@ -7,29 +7,29 @@ const menuRoutes = require('./menuRoutes');
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Database connection setup
+// Database connection 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
 });
 
-// Middleware to attach pool to every request
+
 app.use((req, res, next) => {
   req.pool = pool;
   next();
 });
 
-// JSON parsing middleware
+
 app.use(express.json());
 
-// Serve the homepage
+//homepage
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'homepage.html'));
 });
 
-// Use menu routes for /api/menu paths
+// Use menu routes 
 app.use('/api/menu', menuRoutes);
 
-// Customer details endpoint
+// Customer details 
 app.get('/api/customers', async (req, res) => {
   try {
     const result = await pool.query(`
@@ -145,7 +145,7 @@ app.get('/api/menu-items', async (req, res) => {
   }
 });
 
-// Start the server
+
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
