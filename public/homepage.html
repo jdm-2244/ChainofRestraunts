@@ -4,10 +4,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Restaurant Home Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #000; /* Black background */
+            color: #fff; /* White text color for contrast */
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            color: #ffcc00; /* Gold color for the header */
+            margin-top: 20px;
+        }
+        p {
+            color: #ccc; /* Light gray for description text */
+        }
+        .button-container {
+            margin: 20px;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            color: #000; /* Black text color for buttons */
+            background-color: #ffcc00; /* Gold button color */
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+        .button:hover {
+            background-color: #ffb700; 
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to the Restaurant API</h1>
+    <h1>Welcome to the DBS10 Restaurant </h1>
     <p>Explore our menu, make orders, and more!</p>
+
+    <div class="button-container">
+        <a href="/api/menu/menu-items" class="button">View Menu Items</a>
+        <a href="/api/orders" class="button">Place an Order</a>
+        <a href="/api/transactions" class="button">View Transactions</a>
+        <a href="/api/customers" class="button">Customer Details</a>
+    </div>
+
+    <p>Use the buttons above to explore around!</p>
 </body>
 </html>
-
