@@ -27,7 +27,7 @@ router.post('/menu-items', async (req, res) => {
   }
 });
 
-// PUT to update a menu item
+// PUT  to update a menu item
 router.put('/menu-items/:id', async (req, res) => {
   const { id } = req.params;
   const { item_name, type_of_menu_item, price } = req.body;
