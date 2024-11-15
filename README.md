@@ -29,7 +29,7 @@ Thank you for taking the time to look and assess our assignment, if you have any
     
   🎈Congratulations you have created our database🎈
 
-  Now we are hitting the home stretch type ** node index.js ** into the terminal or command panel and you will activate our website on: 
+  Now we are hitting the home stretch type node index.js  into the terminal or command panel and you will activate our website on: 
     🌟 http://localhost:3000 🌟
 
 Again we are available if there are any issues regarding setting up the website if not contacted originally from one of our teammates contact, ww2geek101 for any questions thank you!
