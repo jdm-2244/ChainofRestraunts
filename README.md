@@ -32,5 +32,8 @@ Thank you for taking the time to look and assess our assignment, if you have any
   Now we are hitting the home stretch type node index.js  into the terminal or command panel and you will activate our website on: 
     🌟 http://localhost:3000 🌟
 
-Again we are available if there are any issues regarding setting up the website if not contacted originally from one of our teammates contact, ww2geek101 for any questions thank you!
+Once we have the website up and running there should be 3 buttons in which show you different ways we have called from the database to the website. It is not the prettiest website
+but it shows some functionality 🫡
+
+Again we are available if there are any issues regarding setting up or just questions with the website if not contacted originally from one of our teammates contact, ww2geek101 for any questions thank you!
 
