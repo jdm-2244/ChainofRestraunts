@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Golden Dragon</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .header {
+            text-align: center;
+            padding: 20px;
+            background-color: #fff;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .restaurant-name {
+            color: #d4b14c;
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .category-section {
+            background-color: white;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .category-title {
+            color: #d4b14c;
+            font-size: 24px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .menu-item {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .menu-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .item-details {
+            padding: 15px;
+        }
+
+        .item-name {
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .price {
+            color: #d4b14c;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .description {
+            color: #666;
+            font-size: 14px;
+            margin: 10px 0;
+        }
+
+        @media (max-width: 768px) {
+            .menu-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1 class="restaurant-name">Golden Dragon</h1>
+        <p>Authentic Chinese Cuisine</p>
+    </div>
+
+    <!-- Appetizers Section -->
+    <div class="category-section">
+        <h2 class="category-title">Appetizers</h2>
+        <div class="menu-grid">
+            <div class="menu-item">
+                <img src="/api/placeholder/400/300" alt="Spring Rolls">
+                <div class="item-details">
+                    <div class="item-name">Spring Rolls</div>
+                    <div class="price">$6.00</div>
+                    <div class="description">Crispy spring rolls filled with vegetables and mushrooms</div>
+                </div>
+            </div>
+            <div class="menu-item">
+                <img src="/api/placeholder/400/300" alt="Dumplings">
+                <div class="item-details">
+                    <div class="item-name">Steamed Dumplings</div>
+                    <div class="price">$8.00</div>
+                    <div class="description">Handmade pork and chive dumplings</div>
+                </div>
+            </div>
+            <div class="menu-item">
+                <img src="/api/placeholder/400/300" alt="Wonton Soup">
+                <div class="item-details">
+                    <div class="item-name">Wonton Soup</div>
+                    <div class="price">$7.50</div>
+                    <div class="description">Clear broth soup with pork wontons and green onions</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Dishes Section -->
+    <div class="category-section">
+        <h2 class="category-title">Main Dishes</h2>
+        <div class="menu-grid">
+            <div class="menu-item">
+                <img src="/api/placeholder/400/300" alt="Kung Pao Chicken">
+                <div class="item-details">
+                    <div class="item-name">Kung Pao Chicken</div>
+                    <div class="price">$15.00</div>
+                    <div class="description">Spicy diced chicken with peanuts and vegetables</div>
+                </div>
+            </div>
+            <div class="menu-item">
+                <img src="/api/placeholder/400/300" alt="Beef with Broccoli">
+                <div class="item-details">
+                    <div class="item-name">Beef with Broccoli</div>
+                    <div class="price">$16.50</div>
+                    <div class="description">Tender beef slices with fresh broccoli in brown sauce</div>
+                </div>
+            </div>
+            <div class="menu-item">
+                <img src="/api/placeholder/400/300" alt="Mapo Tofu">
+                <div class="item-details">
+                    <div class="item-name">Mapo Tofu</div>
+                    <div class="price">$14.00</div>
+                    <div class="description">Spicy tofu with minced pork in Sichuan sauce</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rice & Noodles Section -->
+    <div class="category-section">
+        <h2 class="category-title">Rice & Noodles</h2>
+        <div class="menu-grid">
+            <div class="menu-item">
+                <img src="/api/placeholder/400/300" alt="Lo Mein">
+                <div class="item-details">
+                    <div class="item-name">Lo Mein</div>
+                    <div class="price">$13.00</div>
+                    <div class="description">Stir-fried noodles with vegetables and choice of protein</div>
+                </div>
+            </div>
+            <div class="menu-item">
+                <img src="/api/placeholder/400/300" alt="Fried Rice">
+                <div class="item-details">
+                    <div class="item-name">House Special Fried Rice</div>
+                    <div class="price">$14.50</div>
+                    <div class="description">Wok-fried rice with shrimp, chicken, and vegetables</div>
+                </div>
+            </div>
+            <div class="menu-item">
+                <img src="/api/placeholder/400/300" alt="Chow Fun">
+                <div class="item-details">
+                    <div class="item-name">Beef Chow Fun</div>
+                    <div class="price">$15.50</div>
+                    <div class="description">Wide rice noodles stir-fried with beef and bean sprouts</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Drinks Section -->
+    <div class="category-section">
+        <h2 class="category-title">Drinks</h2>
+        <div class="menu-grid">
+            <div class="menu-item">
+                <img src="/api/placeholder/400/300" alt="Boba Tea">
+                <div class="item-details">
+                    <div class="item-name">Boba Tea</div>
+                    <div class="price">$5.00</div>
+                    <div class="description">Classic milk tea with tapioca pearls</div>
+                </div>
+            </div>
+            <div class="menu-item">
+                <img src="/api/placeholder/400/300" alt="Chinese Tea">
+                <div class="item-details">
+                    <div class="item-name">Chinese Tea</div>
+                    <div class="price">$3.00</div>
+                    <div class="description">Choice of Jasmine, Oolong, or Green tea</div>
+                </div>
+            </div>
+            <div class="menu-item">
+                <img src="/api/placeholder/400/300" alt="Soft Drinks">
+                <div class="item-details">
+                    <div class="item-name">Soft Drinks</div>
+                    <div class="price">$2.50</div>
+                    <div class="description">Coke, Sprite, Diet Coke, or Ginger Ale</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Desserts Section -->
+    <div class="category-section">
+        <h2 class="category-title">Desserts</h2>
+        <div class="menu-grid">
+            <div class="menu-item">
+                <img src="/api/placeholder/400/300" alt="Moon Cake">
+                <div class="item-details">
+                    <div class="item-name">Moon Cake</div>
+                    <div class="price">$6.00</div>
+                    <div class="description">Traditional Chinese pastry with sweet filling</div>
+                </div>
+            </div>
+            <div class="menu-item">
+                <img src="/api/placeholder/400/300" alt="Mango Pudding">
+                <div class="item-details">
+                    <div class="item-name">Mango Pudding</div>
+                    <div class="price">$5.50</div>
+                    <div class="description">Fresh mango pudding with coconut milk</div>
+                </div>
+            </div>
+            <div class="menu-item">
+                <img src="/api/placeholder/400/300" alt="Fried Bananas">
+                <div class="item-details">
+                    <div class="item-name">Fried Bananas</div>
+                    <div class="price">$6.50</div>
+                    <div class="description">Crispy fried bananas with honey and sesame</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
