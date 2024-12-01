@@ -1,1 +1,359 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Place an Order - DBS10 Restaurant</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        select {
+        background-color: #000; 
+        color: #fff; 
+        border: 1px solid #ffcc00; 
+        padding: 8px; 
+        border-radius: 5px; /
+    }
+
+        h1, h2 {
+            color: #ffcc00;
+            text-align: center;
+        }
+
+        nav {
+            background-color: rgba(255, 204, 0, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        nav a {
+            margin: 0 15px;
+            text-decoration: none;
+            color: #ffcc00;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        nav a:hover {
+            background-color: rgba(255, 204, 0, 0.2);
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .menu-section {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .order-section {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 20px;
+            position: sticky;
+            top: 20px;
+        }
+
+        .menu-categories {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .category-btn {
+            background-color: rgba(255, 204, 0, 0.1);
+            border: 1px solid #ffcc00;
+            color: #ffcc00;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .category-btn.active {
+            background-color: #ffcc00;
+            color: #000;
+        }
+
+        .menu-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .menu-item {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .menu-item:hover {
+            background-color: rgba(255, 204, 0, 0.1);
+        }
+
+        .menu-item.selected {
+            border: 2px solid #ffcc00;
+        }
+
+        .item-name {
+            color: #ffcc00;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .item-price {
+            color: #fff;
+            font-size: 0.9em;
+        }
+
+        .order-summary {
+            margin-top: 20px;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .remove-item {
+            color: #ff4444;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 5px;
+        }
+
+        .total {
+            font-size: 1.2em;
+            color: #ffcc00;
+            margin-top: 20px;
+            text-align: right;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #ffcc00;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ffcc00;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        button[type="submit"] {
+            background-color: #ffcc00;
+            color: #000;
+            border: none;
+            padding: 12px;
+            border-radius: 4px;
+            width: 100%;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: background-color 0.3s;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #ffb700;
+        }
+
+        .success-message {
+            background-color: rgba(76, 175, 80, 0.1);
+            color: #4CAF50;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 20px;
+            text-align: center;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Place an Order</h1>
+    <nav>
+        <a href="/"><i class="fas fa-home"></i> Home</a>
+        <a href="/dashboard.html"><i class="fas fa-chart-bar"></i> Dashboard</a>
+        <a href="/menu-items.html"><i class="fas fa-utensils"></i> Menu Items</a>
+        <a href="/transactions.html"><i class="fas fa-receipt"></i> Transactions</a>
+        <a href="/customers.html"><i class="fas fa-users"></i> Customers</a>
+    </nav>
+
+    <div class="container">
+        <div class="menu-section">
+            <h2>Menu Items</h2>
+            <div class="menu-categories" id="menu-categories"></div>
+            <div class="menu-items" id="menu-items"></div>
+        </div>
+
+        <div class="order-section">
+            <h2>Order Summary</h2>
+            <form id="order-form">
+                <div class="form-group">
+                    <label for="menu-item">Menu Item:</label>
+                    <select id="menu-item" required>
+                        <option value="">Select a menu item</option>
+                    </select>
+                </div>
+                <div class="order-summary" id="order-summary">
+                    <div id="selected-items"></div>
+                    <div class="total" id="order-total">Total: $0.00</div>
+                </div>
+
+                <button type="submit">
+                    <i class="fas fa-check-circle"></i> Place Order
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let menuItems = [];
+        let selectedItems = new Map();
+    
+        async function fetchMenuItems() {
+            const response = await fetch('/api/menu-items');
+            menuItems = await response.json();
+            renderMenuItems(menuItems);
+            populateDropdown(menuItems);
+        }
+    
+        function renderMenuItems(items) {
+            const container = document.getElementById('menu-items');
+            container.innerHTML = items.map(item => `
+                <div class="menu-item" onclick="addMenuItem(${item.menu_item_id}, '${item.item_name}', ${item.price})">
+                    ${item.item_name} - $${item.price}
+                </div>
+            `).join('');
+        }
+    
+        function populateDropdown(items) {
+            const dropdown = document.getElementById('menu-item');
+            dropdown.innerHTML = '<option value="">Select a menu item</option>';
+            items.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item.menu_item_id;
+                option.textContent = `${item.item_name} - $${item.price}`;
+                dropdown.appendChild(option);
+            });
+        }
+    
+        function addMenuItem(id, name, price) {
+            if (selectedItems.has(id)) {
+                alert('This item is already added to the order.');
+                return;
+            }
+            selectedItems.set(id, { name, price });
+            updateOrderSummary();
+        }
+    
+        function updateOrderSummary() {
+            const container = document.getElementById('selected-items');
+            let total = 0;
+            container.innerHTML = '';
+            selectedItems.forEach((item, id) => {
+                total += item.price;
+                const div = document.createElement('div');
+                div.className = 'order-item';
+                div.innerHTML = `
+                    <span>${item.name}</span>
+                    <span>
+                        $${item.price.toFixed(2)}
+                        <button class="remove-item" onclick="removeMenuItem(${id})">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </span>
+                `;
+                container.appendChild(div);
+            });
+            document.getElementById('order-total').textContent = `Total: $${total.toFixed(2)}`;
+        }
+    
+        function removeMenuItem(id) {
+            selectedItems.delete(id);
+            updateOrderSummary();
+        }
+    
+        document.getElementById('order-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+    
+            if (!selectedItems.size) {
+                alert('Please select at least one item to order.');
+                return;
+            }
+    
+            const franchiseId = 1; // Assuming a static franchise ID for this example
+            const totalAmount = Array.from(selectedItems.values()).reduce((sum, item) => sum + item.price, 0);
+            const menuItems = Array.from(selectedItems.keys());
+    
+            const orderData = {
+                franchise_id: franchiseId,
+                menu_items: menuItems,
+                total_amount: totalAmount
+            };
+    
+            try {
+                const response = await fetch('/api/orders', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(orderData)
+                });
+    
+                if (!response.ok) {
+                    throw new Error('Failed to place the order.');
+                }
+    
+                const result = await response.json();
+                alert(`Order placed successfully! Order ID: ${result.orderId}`);
+                selectedItems.clear();
+                updateOrderSummary();
+            } catch (error) {
+                console.error('Error placing order:', error);
+                alert('An error occurred while placing the order. Please try again.');
+            }
+        });
+    
+        fetchMenuItems();
+    </script>
+    
+</body>
+</html>
