@@ -221,26 +221,11 @@
                         </span>
                     </td>
                     <td class="action-buttons">
-                        <button class="action-btn edit-btn" onclick="editCustomer(${customer.user_id})">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="action-btn delete-btn" onclick="deleteCustomer(${customer.user_id})">
-                            <i class="fas fa-trash"></i>
-                        </button>
+                        <button class="edit-btn" onclick="editCustomer(${customer.user_id})"><i class="fas fa-edit"></i></button>
+                        <button class="delete-btn" onclick="deleteCustomer(${customer.user_id})"><i class="fas fa-trash"></i></button>
                     </td>
                 </tr>
             `).join('');
-        }
-
-        function filterCustomers() {
-            const searchTerm = document.getElementById('search-input').value.toLowerCase();
-            const filtered = customers.filter(customer => 
-                customer.First_name.toLowerCase().includes(searchTerm) ||
-                customer.Last_name.toLowerCase().includes(searchTerm) ||
-                customer.email.toLowerCase().includes(searchTerm) ||
-                customer.phone_number.includes(searchTerm)
-            );
-            renderCustomers(filtered);
         }
 
         function showAddCustomerModal() {
@@ -306,10 +291,20 @@
             }
         }
 
-        document.getElementById('search-input').addEventListener('input', filterCustomers);
+        document.getElementById('search-input').addEventListener('input', () => {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const filteredCustomers = customers.filter(customer =>
+                customer.First_name.toLowerCase().includes(searchTerm) ||
+                customer.Last_name.toLowerCase().includes(searchTerm) ||
+                customer.email.toLowerCase().includes(searchTerm) ||
+                customer.phone_number.includes(searchTerm)
+            );
+            renderCustomers(filteredCustomers);
+        });
 
-        // Initial load
+        // Load customers on page load
         fetchCustomers();
     </script>
+    <script src="customers.js"></script>
 </body>
 </html>
