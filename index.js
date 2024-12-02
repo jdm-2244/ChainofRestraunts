@@ -3,7 +3,7 @@ const express = require('express');
 const { Pool } = require('pg');
 const path = require('path');
 const menuRoutes = require('./menuRoutes');
-
+const franchiseRoutes = require('./franchiseRoutes'); //franchiseRoutes
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -15,6 +15,12 @@ const pool = new Pool({
 app.use((req, res, next) => {
   req.pool = pool;
   next();
+});
+
+// franchiseRoutes.js
+app.use('/api/franchise', franchiseRoutes);
+app.get('/franchises.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'franchises.html'));
 });
 
 app.use(express.json());
