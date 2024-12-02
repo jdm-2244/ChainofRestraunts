@@ -3,7 +3,7 @@ const express = require('express');
 const { Pool } = require('pg');
 const path = require('path');
 const menuRoutes = require('./menuRoutes');
-const franchiseRoutes = require('./franchiseRoutes'); //franchiseRoutes
+
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -15,12 +15,6 @@ const pool = new Pool({
 app.use((req, res, next) => {
   req.pool = pool;
   next();
-});
-
-// franchiseRoutes.js
-app.use('/api/franchise', franchiseRoutes);
-app.get('/franchises.html', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'franchises.html'));
 });
 
 app.use(express.json());
@@ -145,12 +139,17 @@ app.get('/api/menu-items', async (req, res) => {
 });
 
 app.post('/api/orders', async (req, res) => {
-  const { franchise_id, menu_items, total_amount } = req.body;
+  const { customer_id, franchise_id, menu_items, total_amount } = req.body;
+
+  // Validate required fields
+  if (!customer_id || !franchise_id || !menu_items || !total_amount) {
+      return res.status(400).json({ error: 'Missing required fields: customer_id, franchise_id, menu_items, or total_amount' });
+  }
 
   try {
-      await pool.query('BEGIN'); // Start the transaction
+      await pool.query('BEGIN');
 
-      // Insert a new order
+      // Insert new order
       const orderResult = await pool.query(
           `INSERT INTO orders ("Franchise_id", total_amount, status, order_date)
            VALUES ($1, $2, 'pending', NOW()) RETURNING id`,
@@ -174,12 +173,12 @@ app.post('/api/orders', async (req, res) => {
           [orderId, customer_id, total_amount, true] // assuming cash transaction
       );
 
-      await pool.query('COMMIT'); // Commit the transaction
-      res.status(201).json({ orderId }); // Send success response
+      await pool.query('COMMIT');
+      res.status(201).json({ orderId });
   } catch (error) {
-      await pool.query('ROLLBACK'); // Rollback the transaction on error
+      await pool.query('ROLLBACK');
       console.error('Error creating order:', error);
-      res.status(500).json({ error: 'Failed to create order' }); // Send error response
+      res.status(500).json({ error: 'Failed to create order' });
   }
 });
 
@@ -206,6 +205,10 @@ app.post('/api/orders', async (req, res) => {
   const { customer_id, franchise_id, menu_items, total_amount } = req.body;
 
   try {
+      if (!customer_id || !franchise_id || !menu_items || !total_amount) {
+          return res.status(400).json({ error: 'Missing required fields.' });
+      }
+
       await pool.query('BEGIN');
 
       // Insert new order
