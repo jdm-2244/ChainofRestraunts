@@ -132,48 +132,67 @@
     </div>
 
     <script>
-async function fetchFranchises() {
+  async function loadFranchises() {
+    const container = document.getElementById('franchise-container');
+    container.innerHTML = '<div class="loading">Loading franchises...</div>';
+    
     try {
-        const response = await fetch('/api/franchise');  // Updated path
-        console.log('Response status:', response.status);
+        // First try the main endpoint
+        let response = await fetch('/api/franchises');
+        
+        // If main endpoint fails, try backup endpoint
+        if (!response.ok) {
+            console.log('Main endpoint failed, trying backup...');
+            response = await fetch('/api/franchises/test');
+        }
         
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         
         const franchises = await response.json();
-        console.log('Franchises data:', franchises);
         
-        const container = document.getElementById('franchise-container');
-        
-        if (!franchises || franchises.length === 0) {
-            container.innerHTML = '<div class="empty-state">No franchise locations found</div>';
-            return;
+        if (!franchises || !Array.isArray(franchises)) {
+            console.error('Invalid franchise data received:', franchises);
+            throw new Error('Invalid data format received from server');
         }
-
-        container.innerHTML = franchises.map(franchise => `
-            <div class="franchise-card">
-                <h3><i class="fas fa-store"></i> ${franchise.City || 'Unknown Location'}</h3>
-                <div class="franchise-details">
-                    <p><i class="fas fa-map-marker-alt"></i> ${franchise.address || 'No address available'}</p>
-                    <p><i class="fas fa-map"></i> ${franchise.State || 'Unknown State'}</p>
-                    <p><i class="fas fa-envelope"></i> ZIP: ${franchise.zip || 'N/A'}</p>
-                </div>
-            </div>
-        `).join('');
+        
+        console.log('Franchises loaded:', franchises); // Debug log
+        displayFranchises(franchises);
+        
     } catch (error) {
-        console.error('Error fetching franchises:', error);
-        document.getElementById('franchise-container').innerHTML = 
-            `<div class="empty-state">Error loading franchise locations: ${error.message}</div>`;
+        console.error('Error details:', error);
+        container.innerHTML = `
+            <div class="error">
+                <p>Failed to load franchise data. Please try again later.</p>
+                <p>Error: ${error.message}</p>
+                <button onclick="loadFranchises()" class="retry-button">Retry</button>
+            </div>`;
     }
 }
 
+function displayFranchises(franchises) {
+    const container = document.getElementById('franchise-container');
+    
+    if (!franchises.length) {
+        container.innerHTML = '<div class="no-data">No franchise locations found.</div>';
+        return;
+    }
 
-        // Load franchises on page load
-        fetchFranchises();
+    container.innerHTML = franchises.map(franchise => `
+        <div class="franchise-card">
+            <h3>${franchise["City"] || franchise.city}, ${franchise["State"] || franchise.state}</h3>
+            <p>${franchise.address}</p>
+            <p>ZIP: ${franchise.zip}</p>
+        </div>
+    `).join('');
+}
 
-        // Refresh data every 5 minutes
-        setInterval(fetchFranchises, 300000);
+// Add this to help with debugging
+window.addEventListener('load', () => {
+    console.log('Page loaded, initiating franchise data load...');
+    loadFranchises();
+});
     </script>
 </body>
 </html>

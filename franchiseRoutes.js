@@ -1,47 +1,40 @@
-// franchiseRoutes.js
 const express = require('express');
 const router = express.Router();
 
-// Get all franchises
 router.get('/', async (req, res) => {
     try {
         const query = `
             SELECT
-                "City",
-                "State",
-                address,
-                zip
-            FROM franchise
-            ORDER BY "City"
+                f.id,
+                f."City",
+                f."State",
+                f.address,
+                f.zip,
+                COUNT(o.id) as total_orders
+            FROM franchise f
+            LEFT JOIN orders o ON o."Franchise_id" = f.id
+            GROUP BY f.id, f."City", f."State", f.address, f.zip
+            ORDER BY f."City"
         `;
         const result = await req.pool.query(query);
-        res.json(result.rows);
+        
+        // Transform the data to ensure consistent property access
+        const transformedData = result.rows.map(row => ({
+            id: row.id,
+            city: row["City"],
+            state: row["State"],
+            address: row.address,
+            zip: row.zip,
+            total_orders: Number(row.total_orders)
+        }));
+        
+        res.json(transformedData);
     } catch (err) {
         console.error('Error fetching franchises:', err);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-});
-
-// Get a specific franchise by ID
-router.get('/:id', async (req, res) => {
-    try {
-        const query = `
-            SELECT
-                "City",
-                "State",
-                address,
-                zip
-            FROM franchise
-            WHERE id = $1
-        `;
-        const result = await req.pool.query(query, [req.params.id]);
-        if (result.rows.length === 0) {
-            return res.status(404).json({ error: 'Franchise not found' });
-        }
-        res.json(result.rows[0]);
-    } catch (err) {
-        console.error('Error fetching franchise:', err);
-        res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ 
+            error: 'Failed to fetch franchises',
+            details: err.message 
+        });
     }
 });
 

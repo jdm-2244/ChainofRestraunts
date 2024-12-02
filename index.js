@@ -3,7 +3,7 @@ const express = require('express');
 const { Pool } = require('pg');
 const path = require('path');
 const menuRoutes = require('./menuRoutes');
-
+const franchiseRoutes = require('./franchiseRoutes'); //franchiseRoutes
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -19,6 +19,12 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
+
+// franchiseRoutes.js
+app.use('/api/franchises', franchiseRoutes);
+app.get('/franchises.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'franchises.html'));
+});
 
 app.use('/api/menu', menuRoutes);
 
@@ -44,6 +50,35 @@ app.get('/customers.html', (req, res) => {
 });
 
 // Updated API Routes
+
+// Add a direct franchise route in index.js as backup
+app.get('/api/franchises/test', async (req, res) => {
+  try {
+      const query = `
+          SELECT 
+              id,
+              "City" as city,
+              "State" as state,
+              address,
+              zip,
+              (
+                  SELECT COUNT(*)
+                  FROM orders o
+                  WHERE o."Franchise_id" = f.id
+              ) as total_orders
+          FROM franchise f
+          ORDER BY "City"
+      `;
+      const result = await pool.query(query);
+      res.json(result.rows);
+  } catch (error) {
+      console.error('Error fetching franchises:', error);
+      res.status(500).json({ 
+          error: 'Failed to fetch franchises',
+          details: error.message 
+      });
+  }
+});
 
 // Customer details - updated table name casing
 app.get('/api/customers', async (req, res) => {
@@ -125,12 +160,17 @@ app.get('/api/orders', async (req, res) => {
 app.get('/api/menu-items', async (req, res) => {
   try {
     const result = await pool.query(`
-      SELECT mi.menu_item_id, mi.item_name, mi.type_of_menu_item, 
-             mi.quantity, p.price
+      SELECT 
+        mi.menu_item_id, 
+        mi.item_name, 
+        mi.type_of_menu_item,
+        mi.quantity,
+        p.price
       FROM menu_item mi
       JOIN pricing p ON mi.menu_item_id = p.menu_item_id
       ORDER BY mi.type_of_menu_item, mi.item_name
     `);
+    console.log('Fetched menu items:', result.rows); // For debugging
     res.json(result.rows);
   } catch (error) {
     console.error('Error fetching menu items:', error);
