@@ -32,6 +32,10 @@ First things first, we need to understand the prerequisite software that we are 
 Using commands that come downloaded with node, double check to see if you have the dependencies downloaded within our folder/directory (we should already have them in the folder):
 Copynpm install
 
+Since we have a database dump here is the commands to import it: 
+createdb Restaurant
+psql Restaurant < Restaurant_V16.sql
+
 Now look at our .env file. It should have a template like this:
 DATABASE_URL=postgresql://username:password@localhost:5432/Restaurant
 PORT=3000
