@@ -1,4 +1,5 @@
-*ChainofRestraunts*
+**Chain of Restraunts**
+
 This repository contains the contents of a Project that contains a database that is supposed to hold a
 chain of restraunts. It will have tables that include the payments for orders, frequent customers as well as the locations for restraunts.
 Criteria from prompt
