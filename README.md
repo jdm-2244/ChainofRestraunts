@@ -48,10 +48,15 @@ Now we are hitting the home stretch type node index.js  into the terminal or com
 Once we have the website up and running, you'll see our homepage with several navigation options:
 
 Users Profile Management - For managing customer accounts and memberships
+
 Menu - Browse our menu items and their pricing
+
 Place Order - Order food for pickup or delivery
+
 Transactions - View order history and payment records
+
 Dashboard - Access analytics and reports
+
 Locations - View our restaurant franchise locations
 
 While the interface is simple, it demonstrates core database functionality including customer management, order processing, and multi-location restaurant operations. Each section shows different ways we've implemented database queries and data management. 🫡
